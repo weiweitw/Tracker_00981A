@@ -1,0 +1,21 @@
+# Node.js 相關
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# 系統與編輯器產生檔
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# 環境變數設定檔 (如果有使用的話，避免推送到公開庫)
+.env
+.env.local
+
+# -----------------------------------------------------
+# ⚠️ 特別注意：關於 data/ 資料夾
+# -----------------------------------------------------
+# 我們「不」把 data/ 寫進這裡，因為 GitHub Pages 的前端網頁
+# 需要讀取 GitHub 儲存庫裡面的 data.json 來顯示表格。
+# GitHub Actions 每天產生的 JSON 檔案必須能被 git commit 追蹤！

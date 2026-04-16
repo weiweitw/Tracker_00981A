@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>00981A 每日成分股變化追蹤</title>
+    <style>
+        body {
+            font-family: "Microsoft JhengHei", Arial, sans-serif;
+            background: #f4f7f6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: right;
+        }
+
+        th {
+            background-color: #0056b3;
+            color: white;
+            text-align: center;
+        }
+
+        td:nth-child(1),
+        td:nth-child(2) {
+            text-align: center;
+        }
+
+        /* 台股紅綠設定 */
+        .up {
+            color: #d90000;
+            font-weight: bold;
+        }
+
+        /* 增加：紅色 */
+        .down {
+            color: #008b00;
+            font-weight: bold;
+        }
+
+        /* 減少：綠色 */
+        .neutral {
+            color: #666;
+        }
+
+        /* 無變化：灰色 */
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>📊 00981A 每日成分股變化追蹤</h1>
+        <p style="text-align: center;">更新日期：<span id="update-time">載入中...</span></p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>股票代號</th>
+                    <th>股票名稱</th>
+                    <th>今日持股(張)</th>
+                    <th>較昨日增減(張)</th>
+                    <th>資金變化偏向(估算)</th>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+                <tr>
+                    <td colspan="5" style="text-align: center;">資料讀取中...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // 讀取 GitHub Actions 每天自動算好並存下來的 json
+        fetch('./data/daily_diff.json')
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('update-time').textContent = data.updateDate;
+                const tbody = document.getElementById('table-body');
+                tbody.innerHTML = '';
+
+                data.holdings.forEach(stock => {
+                    const diffShares = stock.diffShares;
+                    let diffClass = 'neutral';
+                    let diffText = diffShares;
+
+                    if (diffShares > 0) {
+                        diffClass = 'up';
+                        diffText = '+' + diffShares;
+                    } else if (diffShares < 0) {
+                        diffClass = 'down';
+                    }
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${stock.code}</td>
+                        <td>${stock.name}</td>
+                        <td>${stock.currentShares}</td>
+                        <td class="${diffClass}">${diffText}</td>
+                        <td class="${diffClass}">${stock.diffAmountText}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            })
+            .catch(err => {
+                document.getElementById('table-body').innerHTML = '<tr><td colspan="5" style="text-align: center;">尚無資料或讀取失敗，請確認 GitHub Actions 是否執行成功。</td></tr>';
+            });
+    </script>
+</body>
+
+</html>
