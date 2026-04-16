@@ -1,3 +1,7 @@
+const dns = require('dns');
+// 強制 Node.js 在底層進行 DNS 解析時，永遠優先使用 IPv4
+dns.setDefaultResultOrder('ipv4first');
+
 const fs = require('fs');
 const path = require('path');
 const cheerio = require('cheerio');
