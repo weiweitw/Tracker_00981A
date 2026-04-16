@@ -1,0 +1,12 @@
+{
+    "name": "tracker_00981a",
+    "version": "1.0.0",
+    "description": "Daily ETF Data Fetcher",
+    "main": "update_data.js",
+    "scripts": {
+        "start": "node update_data.js"
+    },
+    "dependencies": {
+        "cheerio": "^1.0.0"
+    }
+}

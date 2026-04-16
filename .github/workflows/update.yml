@@ -16,11 +16,11 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '18'
+        node-version: '20'
 
     # 告訴機器人安裝 cheerio
     - name: Install dependencies
-      run: npm install cheerio
+      run: npm install
 
     - name: Run update script
       run: node update_data.js
