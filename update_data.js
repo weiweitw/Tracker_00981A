@@ -11,20 +11,44 @@ if (!fs.existsSync(dataDir)) {
 
 const TARGET_URL = 'https://www.ezmoney.com.tw/ETF/Information/00981A';
 
+// 建立一個帶有重試機制與完整瀏覽器偽裝的抓取函數
+async function fetchWithRetry(url, retries = 3) {
+    for (let i = 0; i < retries; i++) {
+        try {
+            console.log(`正在進行第 ${i + 1} 次連線嘗試...`);
+            const response = await axios.get(url, {
+                headers: {
+                    // 全套瀏覽器偽裝，降低被防火牆阻擋的機率
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+                    'Accept-Language': 'zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7',
+                    'Cache-Control': 'max-age=0',
+                    'Upgrade-Insecure-Requests': '1',
+                    'Connection': 'keep-alive'
+                },
+                timeout: 30000 // 增加超時限制到 30 秒
+            });
+            return response.data; // 成功就直接回傳 HTML
+        } catch (error) {
+            console.error(`第 ${i + 1} 次嘗試失敗: ${error.message}`);
+            if (i === retries - 1) {
+                throw new Error("已達最大重試次數，放棄抓取。");
+            }
+            // 每次失敗後等待 5 秒再試
+            console.log("等待 5 秒後重新嘗試...");
+            await new Promise(resolve => setTimeout(resolve, 5000));
+        }
+    }
+}
+
 async function fetchETFData() {
     try {
-        console.log("開始抓取網頁...");
+        console.log("開始執行 00981A 資料更新任務...");
 
-        // 使用 axios 抓取網頁 (自帶超時與瀏覽器偽裝)
-        const response = await axios.get(TARGET_URL, {
-            headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-            },
-            timeout: 15000 // 15秒超時限制
-        });
+        // 呼叫我們剛剛寫好的強化版抓取函數
+        const html = await fetchWithRetry(TARGET_URL);
 
-        console.log("抓取成功！開始解析資料...");
-        const html = response.data;
+        console.log("網頁抓取成功！開始解析資料...");
         const $ = cheerio.load(html);
 
         // 取得隱藏的 JSON 資料
@@ -80,11 +104,9 @@ async function fetchETFData() {
             let sharesDiff = 0;
 
             if (yesterdayData) {
-                // 計算張數差異
                 sharesDiff = todayData.shares - yesterdayData.shares;
             } else {
-                // 昨天沒有，今天是新增的持股
-                sharesDiff = todayData.shares;
+                sharesDiff = todayData.shares; // 昨天沒有，今天是新增的
             }
 
             diffResult.push({
@@ -113,7 +135,7 @@ async function fetchETFData() {
         fs.writeFileSync(diffFile, JSON.stringify(diffResult, null, 2), 'utf-8');
         console.log("差異計算完成，已儲存至 data/daily_diff.json");
 
-        // 儲存今天的完整歷史紀錄 (例如 holdings_20260416.json)
+        // 儲存今天的完整歷史紀錄
         const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
         const historyFile = path.join(dataDir, `holdings_${dateStr}.json`);
         fs.writeFileSync(historyFile, JSON.stringify(todayMap, null, 2), 'utf-8');
@@ -126,9 +148,8 @@ async function fetchETFData() {
 
     } catch (error) {
         console.error("❌ 執行發生錯誤:", error.message);
-        process.exit(1); // 發生錯誤時退出代碼為 1，讓 GitHub Actions 知道任務失敗
+        process.exit(1);
     }
 }
 
-// 執行主程式
 fetchETFData();
