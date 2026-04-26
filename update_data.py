@@ -64,29 +64,68 @@ def fetch_etf_data():
         # 讀取隱藏的 JSON 資料
         raw_data = json.loads(data_asset['data-content'])
 
+        # --- 【安全讀取 EditDate】 ---
+        edit_date_raw = ""
+        # 確保 raw_data 是個列表，且裡面有東西
+        if isinstance(raw_data, list) and len(raw_data) > 0:
+            first_item = raw_data[0]
+            # 確保第一筆資料是字典，才能用 get
+            if isinstance(first_item, dict):
+                edit_date_raw = first_item.get('EditDate', '')
+        
+        if not edit_date_raw:
+            # 如果拿不到 EditDate，就用今天的日期作為備案，避免程式死掉
+            print("警告：無法從網頁取得 EditDate，改用系統當下日期。")
+            update_date = datetime.now().strftime('%Y-%m-%d')
+        else:
+            update_date = edit_date_raw.split('T')[0] if 'T' in edit_date_raw else edit_date_raw
+
+        diff_file = os.path.join(DATA_DIR, 'daily_diff.json')
+
+        # 檢查是否需要更新
+        if os.path.exists(diff_file):
+            with open(diff_file, 'r', encoding='utf-8') as f:
+                try:
+                    old_diff = json.load(f)
+                    if isinstance(old_diff, dict) and old_diff.get('updateDate') == update_date:
+                        print(f"最新資料日期 ({update_date}) 與上次相同，為股市休市或尚未更新。")
+                        print("任務結束，跳過檔案覆寫。")
+                        return 
+                except json.JSONDecodeError:
+                    pass 
+
+        print(f"發現新資料日期：{update_date}，準備進行更新...")
+
+        # --- 【安全尋找股票明細】 ---
         stock_details = []
-        for item in raw_data:
-            if item.get('AssetCode') == 'ST' and item.get('Details'):
-                stock_details = item['Details']
-                break
+        if isinstance(raw_data, list):
+            for item in raw_data:
+                # 必須確保 item 是字典，才能用 get
+                if isinstance(item, dict) and item.get('AssetCode') == 'ST' and item.get('Details'):
+                    stock_details = item['Details']
+                    break
 
         if not stock_details:
             raise Exception("在資料中找不到股票(ST)的持股明細")
 
         # 整理今天的持股資料
         today_map = {}
-        for stock in stock_details:
-            code = stock.get('DetailCode')
-            today_map[code] = {
-                'name': stock.get('DetailName'),
-                'shares': stock.get('Share', 0) / 1000.0, # 轉換為張數
-                'amount': stock.get('Amount', 0)
-            }
+        # 確保 stock_details 是一個列表
+        if isinstance(stock_details, list):
+            for stock in stock_details:
+                # 確保迴圈裡的 stock 是一個字典
+                if isinstance(stock, dict):
+                    code = stock.get('DetailCode')
+                    if code: # 有代號才處理
+                        today_map[code] = {
+                            'name': stock.get('DetailName'),
+                            'shares': stock.get('Share', 0) / 1000.0,
+                            'amount': stock.get('Amount', 0)
+                        }
 
         print(f"成功解析 {len(today_map)} 檔股票。")
 
         yesterday_file = os.path.join(DATA_DIR, 'yesterday.json')
-        diff_file = os.path.join(DATA_DIR, 'daily_diff.json')
 
         # 讀取昨天的資料
         yesterday_map = {}
@@ -125,14 +164,21 @@ def fetch_etf_data():
                     'amountToday': 0
                 })
 
-        # 寫入差異結果檔案 (確保中文不變成 unicode 編碼)
+        # 【關鍵修改】包裝成帶有 updateDate 的新格式
+        final_output = {
+            "updateDate": update_date,
+            "holdings": diff_result
+        }
+
+        # 寫入差異結果檔案
         with open(diff_file, 'w', encoding='utf-8') as f:
-            json.dump(diff_result, f, ensure_ascii=False, indent=2)
+            json.dump(final_output, f, ensure_ascii=False, indent=2)
         print("差異計算完成，已儲存至 data/daily_diff.json")
 
         # 儲存今天的完整歷史紀錄
-        date_str = datetime.now().strftime('%Y%m%d')
-        history_file = os.path.join(DATA_DIR, f'holdings_{date_str}.json')
+        # 這裡改用 update_date 命名檔案，會比系統當下時間更準確
+        history_date_str = update_date.replace('-', '') 
+        history_file = os.path.join(DATA_DIR, f'holdings_{history_date_str}.json')
         with open(history_file, 'w', encoding='utf-8') as f:
             json.dump(today_map, f, ensure_ascii=False, indent=2)
 

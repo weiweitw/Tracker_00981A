@@ -100,10 +100,6 @@
     </div>
 
     <script>
-        // 設定今天的日期為更新時間
-        const today = new Date();
-        document.getElementById('update-time').textContent = today.toLocaleDateString('zh-TW');
-
         // 讀取 JSON 資料
         fetch('data/daily_diff.json')
             .then(res => {
@@ -111,17 +107,18 @@
                 return res.json();
             })
             .then(data => {
+                // 將網頁上的更新時間替換為 JSON 內記錄的 EditDate
+                document.getElementById('update-time').textContent = data.updateDate;
+
                 const tbody = document.getElementById('table-body');
                 tbody.innerHTML = ''; // 清空載入中提示
 
-                // JSON 本身就是一個陣列，直接使用 forEach
-                data.forEach(stock => {
-                    // 對應 JSON 內的屬性名稱：sharesDiff, sharesToday, amountToday
+                // 迴圈要改為遍歷 data.holdings
+                data.holdings.forEach(stock => {
                     const diffShares = stock.sharesDiff;
                     let diffClass = 'neutral';
                     let diffText = diffShares === 0 ? '-' : diffShares.toLocaleString();
 
-                    // 判斷增減並加上正負號與顏色
                     if (diffShares > 0) {
                         diffClass = 'up';
                         diffText = '+' + diffShares.toLocaleString();
@@ -129,15 +126,14 @@
                         diffClass = 'down';
                     }
 
-                    // 將市值格式化為帶有逗號的金額
                     const amountFormatted = stock.amountToday === 0 ? '-' : Math.round(stock.amountToday).toLocaleString();
-
                     const currentSharesFormatted = stock.sharesToday === 0 ? '-' : stock.sharesToday.toLocaleString();
 
                     const tr = document.createElement('tr');
+                    // 這裡先為未來的趨勢圖準備好連結 detail.html?code=XXXX
                     tr.innerHTML = `
                         <td>${stock.code}</td>
-                        <td>${stock.name}</td>
+                        <td><a href="detail.html?code=${stock.code}" style="color: #0056b3; text-decoration: none; font-weight: bold;">${stock.name}</a></td>
                         <td>${currentSharesFormatted}</td>
                         <td class="${diffClass}">${diffText}</td>
                         <td>${amountFormatted}</td>
