@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <!-- 這行 meta viewport 非常重要，它是讓手機版正常縮放的關鍵 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>00981A 每日成分股變化追蹤</title>
     <style>
@@ -10,6 +11,7 @@
             font-family: "Microsoft JhengHei", Arial, sans-serif;
             background: #f4f7f6;
             padding: 20px;
+            margin: 0;
         }
 
         .container {
@@ -24,46 +26,15 @@
         h1 {
             text-align: center;
             color: #333;
+            font-size: 1.5em;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        th,
-        td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: right;
-        }
-
-        th {
-            background-color: #0056b3;
-            color: white;
-            text-align: center;
-        }
-
-        td:nth-child(1),
-        td:nth-child(2) {
-            text-align: center;
-        }
-
-        .up {
-            color: #d9534f;
-            /* 紅色代表增加 */
-            font-weight: bold;
-        }
-
-        .down {
-            color: #5cb85c;
-            /* 綠色代表減少 */
-            font-weight: bold;
-        }
-
-        .neutral {
-            color: #999;
+        h2 {
+            color: #0056b3;
+            border-bottom: 2px solid #0056b3;
+            padding-bottom: 5px;
+            margin-top: 30px;
+            font-size: 1.2em;
         }
 
         .update-info {
@@ -72,78 +43,326 @@
             font-size: 0.9em;
             margin-bottom: 10px;
         }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* ================= 桌面版表格樣式 ================= */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 10px 12px;
+            text-align: right;
+            font-size: 0.95em;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            color: #333;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        td:nth-child(1),
+        td:nth-child(2) {
+            text-align: center;
+        }
+
+        /* 特殊表格表頭顏色 */
+        .table-top3 th {
+            background-color: #ffeeba;
+            color: #856404;
+            border-color: #ffdf7e;
+        }
+
+        .table-new th {
+            background-color: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
+        }
+
+        .table-clear th {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+        }
+
+        .up {
+            color: #d9534f;
+            font-weight: bold;
+        }
+
+        .down {
+            color: #5cb85c;
+            font-weight: bold;
+        }
+
+        .neutral {
+            color: #999;
+        }
+
+        /* ================= 手機版卡片式響應式設計 (RWD) ================= */
+        @media screen and (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            /* 隱藏表頭 */
+            table thead {
+                display: none;
+            }
+
+            /* 將表格元素轉為區塊 */
+            table,
+            tbody,
+            tr,
+            td {
+                display: block;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            /* 每一列 (tr) 變成一張卡片 */
+            tr {
+                margin-bottom: 15px;
+                border: 1px solid #e0e0e0;
+                border-radius: 8px;
+                padding: 5px 15px;
+                background: #fafafa;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            }
+
+            /* 卡片內的每一個儲存格 (td) 變成左右對齊 */
+            td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border: none;
+                border-bottom: 1px dashed #ddd;
+                padding: 10px 0;
+                text-align: right !important;
+                /* 強制數值靠右 */
+            }
+
+            td:last-child {
+                border-bottom: none;
+            }
+
+            /* 透過 CSS ::before 讀取 data-label 屬性，自動產生左側的標題 */
+            td::before {
+                content: attr(data-label);
+                font-weight: bold;
+                color: #555;
+                text-align: left;
+                margin-right: 10px;
+                white-space: nowrap;
+            }
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <h1>00981A 統一台灣高息動能 ETF 成分股追蹤</h1>
+        <h1>📊 00981A 經理人動態追蹤</h1>
         <div class="update-info">
             最後更新日期：<span id="update-time">載入中...</span>
         </div>
-        <table>
-            <thead>
-                <tr>
-                    <th>代號</th>
-                    <th>名稱</th>
-                    <th>今日張數</th>
-                    <th>張數增減</th>
-                    <th>今日市值 (元)</th>
-                </tr>
-            </thead>
-            <tbody id="table-body">
-                <tr>
-                    <td colspan="5" style="text-align: center;">資料載入中...</td>
-                </tr>
-            </tbody>
-        </table>
+
+        <!-- 區塊一：加碼金額前三名 -->
+        <div id="section-top3" class="hidden">
+            <h2>🔥 今日加碼金額前三名</h2>
+            <table class="table-top3">
+                <thead>
+                    <tr>
+                        <th>代號</th>
+                        <th>名稱</th>
+                        <th>增加張數</th>
+                        <th>估算加碼金額 (百萬)</th>
+                    </tr>
+                </thead>
+                <tbody id="body-top3"></tbody>
+            </table>
+        </div>
+
+        <!-- 區塊二：新建倉部位 -->
+        <div id="section-new" class="hidden">
+            <h2>✨ 新建倉部位</h2>
+            <table class="table-new">
+                <thead>
+                    <tr>
+                        <th>代號</th>
+                        <th>名稱</th>
+                        <th>買入張數</th>
+                        <th>買入金額 (百萬)</th>
+                    </tr>
+                </thead>
+                <tbody id="body-new"></tbody>
+            </table>
+        </div>
+
+        <!-- 區塊三：清空部位 -->
+        <div id="section-clear" class="hidden">
+            <h2>🗑️ 清空部位 (完全賣出)</h2>
+            <table class="table-clear">
+                <thead>
+                    <tr>
+                        <th>代號</th>
+                        <th>名稱</th>
+                        <th>賣出張數</th>
+                    </tr>
+                </thead>
+                <tbody id="body-clear"></tbody>
+            </table>
+        </div>
+
+        <!-- 區塊四：總表 -->
+        <div>
+            <h2>📋 完整成分股總表</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>代號</th>
+                        <th>名稱</th>
+                        <th>今日持股 (張)</th>
+                        <th>較昨日增減</th>
+                        <th>今日市值 (百萬)</th>
+                    </tr>
+                </thead>
+                <tbody id="body-all">
+                    <tr>
+                        <td colspan="5" style="text-align: center;">資料載入中...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <script>
-        // 讀取 JSON 資料
+        function formatMillion(number) {
+            if (number === 0) return '-';
+            return (number / 1000000).toFixed(1).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        function formatNumber(number) {
+            if (number === 0) return '-';
+            return number.toLocaleString();
+        }
+
         fetch('data/daily_diff.json')
             .then(res => {
-                if (!res.ok) throw new Error('Network response was not ok');
+                if (!res.ok) throw new Error('Network error');
                 return res.json();
             })
             .then(data => {
-                // 將網頁上的更新時間替換為 JSON 內記錄的 EditDate
                 document.getElementById('update-time').textContent = data.updateDate;
 
-                const tbody = document.getElementById('table-body');
-                tbody.innerHTML = ''; // 清空載入中提示
+                const holdings = data.holdings;
+                let addedStocks = [];
+                let newStocks = [];
+                let clearStocks = [];
 
-                // 迴圈要改為遍歷 data.holdings
-                data.holdings.forEach(stock => {
+                const bodyAll = document.getElementById('body-all');
+                bodyAll.innerHTML = '';
+
+                // --- 1. 分類資料與渲染總表 ---
+                holdings.forEach(stock => {
+                    const sharesToday = stock.sharesToday;
                     const diffShares = stock.sharesDiff;
-                    let diffClass = 'neutral';
-                    let diffText = diffShares === 0 ? '-' : diffShares.toLocaleString();
 
+                    if (sharesToday > 0 && diffShares === sharesToday) {
+                        newStocks.push(stock);
+                    } else if (sharesToday === 0 && diffShares < 0) {
+                        clearStocks.push(stock);
+                    } else if (diffShares > 0) {
+                        const pricePerShare = stock.amountToday / sharesToday;
+                        addedStocks.push({ ...stock, addedAmount: pricePerShare * diffShares });
+                    }
+
+                    let diffClass = 'neutral';
+                    let diffText = diffShares === 0 ? '-' : formatNumber(diffShares);
                     if (diffShares > 0) {
                         diffClass = 'up';
-                        diffText = '+' + diffShares.toLocaleString();
+                        diffText = '+' + formatNumber(diffShares);
                     } else if (diffShares < 0) {
                         diffClass = 'down';
                     }
 
-                    const amountFormatted = stock.amountToday === 0 ? '-' : Math.round(stock.amountToday).toLocaleString();
-                    const currentSharesFormatted = stock.sharesToday === 0 ? '-' : stock.sharesToday.toLocaleString();
-
+                    // 關鍵修改：每個 td 都加上 data-label 屬性供手機版讀取
                     const tr = document.createElement('tr');
-                    // 這裡先為未來的趨勢圖準備好連結 detail.html?code=XXXX
                     tr.innerHTML = `
-                        <td>${stock.code}</td>
-                        <td><a href="detail.html?code=${stock.code}" style="color: #0056b3; text-decoration: none; font-weight: bold;">${stock.name}</a></td>
-                        <td>${currentSharesFormatted}</td>
-                        <td class="${diffClass}">${diffText}</td>
-                        <td>${amountFormatted}</td>
+                        <td data-label="代號">${stock.code}</td>
+                        <td data-label="名稱"><a href="detail.html?code=${stock.code}" style="color: #0056b3; text-decoration: none; font-weight: bold;">${stock.name}</a></td>
+                        <td data-label="今日持股 (張)">${formatNumber(sharesToday)}</td>
+                        <td data-label="較昨日增減" class="${diffClass}">${diffText}</td>
+                        <td data-label="今日市值 (百萬)">${formatMillion(stock.amountToday)}</td>
                     `;
-                    tbody.appendChild(tr);
+                    bodyAll.appendChild(tr);
                 });
+
+                // --- 2. 渲染加碼前三名 ---
+                const bodyTop3 = document.getElementById('body-top3');
+                addedStocks.sort((a, b) => b.addedAmount - a.addedAmount);
+                const top3 = addedStocks.slice(0, 3);
+
+                if (top3.length > 0) {
+                    document.getElementById('section-top3').classList.remove('hidden');
+                    top3.forEach(stock => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td data-label="代號">${stock.code}</td>
+                            <td data-label="名稱">${stock.name}</td>
+                            <td data-label="增加張數" class="up">+${formatNumber(stock.sharesDiff)}</td>
+                            <td data-label="估算加碼 (百萬)" class="up">${formatMillion(stock.addedAmount)}</td>
+                        `;
+                        bodyTop3.appendChild(tr);
+                    });
+                }
+
+                // --- 3. 渲染新建倉 ---
+                if (newStocks.length > 0) {
+                    document.getElementById('section-new').classList.remove('hidden');
+                    const bodyNew = document.getElementById('body-new');
+                    newStocks.sort((a, b) => b.amountToday - a.amountToday).forEach(stock => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td data-label="代號">${stock.code}</td>
+                            <td data-label="名稱">${stock.name}</td>
+                            <td data-label="買入張數" class="up">${formatNumber(stock.sharesToday)}</td>
+                            <td data-label="買入金額 (百萬)" class="up">${formatMillion(stock.amountToday)}</td>
+                        `;
+                        bodyNew.appendChild(tr);
+                    });
+                }
+
+                // --- 4. 渲染清倉 ---
+                if (clearStocks.length > 0) {
+                    document.getElementById('section-clear').classList.remove('hidden');
+                    const bodyClear = document.getElementById('body-clear');
+                    clearStocks.sort((a, b) => a.sharesDiff - b.sharesDiff).forEach(stock => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td data-label="代號">${stock.code}</td>
+                            <td data-label="名稱">${stock.name}</td>
+                            <td data-label="賣出張數" class="down">${formatNumber(stock.sharesDiff)}</td>
+                        `;
+                        bodyClear.appendChild(tr);
+                    });
+                }
             })
             .catch(err => {
                 console.error("讀取資料失敗:", err);
-                document.getElementById('table-body').innerHTML = '<tr><td colspan="5" style="text-align: center; color: red;">讀取失敗，請確認 data/daily_diff.json 是否存在且格式正確。</td></tr>';
+                document.getElementById('body-all').innerHTML = '<tr><td colspan="5" style="text-align: center; color: red;">資料讀取失敗，請確認檔案路徑。</td></tr>';
             });
     </script>
 </body>
