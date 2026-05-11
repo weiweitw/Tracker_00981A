@@ -164,7 +164,7 @@ def fetch_etf_data():
                     'amountToday': 0
                 })
 
-        # 【關鍵修改】包裝成帶有 updateDate 的新格式
+        # 包裝成帶有 updateDate 的格式
         final_output = {
             "updateDate": update_date,
             "holdings": diff_result
@@ -186,6 +186,52 @@ def fetch_etf_data():
         with open(yesterday_file, 'w', encoding='utf-8') as f:
             json.dump(today_map, f, ensure_ascii=False, indent=2)
         print("今日資料已同步更新至 data/yesterday.json")
+
+        # 更新 time_series.json
+        time_series_file = os.path.join(DATA_DIR, 'time_series.json')
+        time_series_data = {}
+
+        if os.path.exists(time_series_file):
+            with open(time_series_file, 'r', encoding='utf-8') as f:
+                try:
+                    time_series_data = json.load(f)
+                except json.JSONDecodeError:
+                    pass
+        # 將今天的資料加入時間序列
+        for stock in diff_result:
+            code = stock['code']
+            name = stock['name']
+            diff_shares = stock['sharesDiff']
+            amount = stock['amountToday']
+            shares_today = stock['sharesToday']
+
+            # today average price
+            price = 0
+            if shares_today > 0:
+                price = round(amount / (shares_today * 1000), 2)
+            
+            if code not in time_series_data:
+                time_series_data[code] = {
+                    'name': name,
+                    'history': []
+                }
+            
+            # 檢查今天是否已經寫過
+            history_list = time_series_data[code]['history']
+            already_exists = any(item.get('date') == update_date for item in history_list)
+
+            if not already_exists:
+                history_list.append({
+                    'date': update_date,
+                    'shares': diff_shares,
+                    'price': price
+                })
+            
+        # 寫回 time_series.json
+        with open(time_series_file, 'w', encoding='utf-8') as f:
+            json.dump(time_series_data, f, ensure_ascii=False, indent=2)
+        print("時間序列已更新至 data/time_series.json")
+            
 
         print("🎉 所有更新流程執行完畢！")
 
