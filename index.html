@@ -3,9 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <!-- 這行 meta viewport 非常重要，它是讓手機版正常縮放的關鍵 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>00981A 每日成分股變化追蹤</title>
+    <title>ETF 每日動態追蹤</title>
     <style>
         body {
             font-family: "Microsoft JhengHei", Arial, sans-serif;
@@ -48,6 +47,35 @@
             display: none !important;
         }
 
+        /* ================= 切換按鈕 (Tabs) ================= */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            background: #e9ecef;
+            color: #333;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .tab-btn:hover {
+            background: #d3d9df;
+        }
+
+        .tab-btn.active {
+            background: #0056b3;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 86, 179, 0.3);
+        }
+
         /* ================= 桌面版表格樣式 ================= */
         table {
             width: 100%;
@@ -75,7 +103,6 @@
             text-align: center;
         }
 
-        /* 特殊表格表頭顏色 */
         .table-top3 th {
             background-color: #ffeeba;
             color: #856404;
@@ -108,7 +135,7 @@
             color: #999;
         }
 
-        /* ================= 手機版卡片式響應式設計 (RWD) ================= */
+        /* ================= 手機版卡片式設計 ================= */
         @media screen and (max-width: 768px) {
             body {
                 padding: 10px;
@@ -118,12 +145,10 @@
                 padding: 15px;
             }
 
-            /* 隱藏表頭 */
             table thead {
                 display: none;
             }
 
-            /* 將表格元素轉為區塊 */
             table,
             tbody,
             tr,
@@ -133,7 +158,6 @@
                 box-sizing: border-box;
             }
 
-            /* 每一列 (tr) 變成一張卡片 */
             tr {
                 margin-bottom: 15px;
                 border: 1px solid #e0e0e0;
@@ -143,7 +167,6 @@
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
             }
 
-            /* 卡片內的每一個儲存格 (td) 變成左右對齊 */
             td {
                 display: flex;
                 justify-content: space-between;
@@ -152,14 +175,12 @@
                 border-bottom: 1px dashed #ddd;
                 padding: 10px 0;
                 text-align: right !important;
-                /* 強制數值靠右 */
             }
 
             td:last-child {
                 border-bottom: none;
             }
 
-            /* 透過 CSS ::before 讀取 data-label 屬性，自動產生左側的標題 */
             td::before {
                 content: attr(data-label);
                 font-weight: bold;
@@ -174,12 +195,17 @@
 
 <body>
     <div class="container">
-        <h1>📊 00981A 經理人動態追蹤</h1>
+        <h1>📊 ETF 經理人動態追蹤</h1>
+
+        <div class="tabs">
+            <a href="?etf=00981A" id="btn-00981A" class="tab-btn">📊 00981A</a>
+            <a href="?etf=00403A" id="btn-00403A" class="tab-btn">🏦 00403A</a>
+        </div>
+
         <div class="update-info">
             最後更新日期：<span id="update-time">載入中...</span>
         </div>
 
-        <!-- 區塊一：加碼金額前三名 -->
         <div id="section-top3" class="hidden">
             <h2>🔥 今日加碼金額前三名</h2>
             <table class="table-top3">
@@ -195,7 +221,6 @@
             </table>
         </div>
 
-        <!-- 區塊二：新建倉部位 -->
         <div id="section-new" class="hidden">
             <h2>✨ 新建倉部位</h2>
             <table class="table-new">
@@ -211,7 +236,6 @@
             </table>
         </div>
 
-        <!-- 區塊三：清空部位 -->
         <div id="section-clear" class="hidden">
             <h2>🗑️ 清空部位 (完全賣出)</h2>
             <table class="table-clear">
@@ -226,7 +250,6 @@
             </table>
         </div>
 
-        <!-- 區塊四：總表 -->
         <div>
             <h2>📋 完整成分股總表</h2>
             <table>
@@ -249,6 +272,14 @@
     </div>
 
     <script>
+        // 取得當前的 ETF 代號，預設 00981A
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentETF = urlParams.get('etf') || '00981A';
+
+        // 啟動對應的按鈕顏色
+        const activeBtn = document.getElementById(`btn-${currentETF}`);
+        if (activeBtn) activeBtn.classList.add('active');
+
         function formatMillion(number) {
             if (number === 0) return '-';
             return (number / 1000000).toFixed(1).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -259,7 +290,8 @@
             return number.toLocaleString();
         }
 
-        fetch('data/daily_diff.json')
+        // 🌟 動態讀取對應資料夾下的 JSON
+        fetch(`data/${currentETF}/daily_diff.json`)
             .then(res => {
                 if (!res.ok) throw new Error('Network error');
                 return res.json();
@@ -298,11 +330,11 @@
                         diffClass = 'down';
                     }
 
-                    // 關鍵修改：每個 td 都加上 data-label 屬性供手機版讀取
+                    // 🌟 點擊內頁時，把 etf 參數帶過去
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                         <td data-label="代號">${stock.code}</td>
-                        <td data-label="名稱"><a href="detail.html?code=${stock.code}" style="color: #0056b3; text-decoration: none; font-weight: bold;">${stock.name}</a></td>
+                        <td data-label="名稱"><a href="detail.html?etf=${currentETF}&code=${stock.code}" style="color: #0056b3; text-decoration: none; font-weight: bold;">${stock.name}</a></td>
                         <td data-label="今日持股 (張)">${formatNumber(sharesToday)}</td>
                         <td data-label="較昨日增減" class="${diffClass}">${diffText}</td>
                         <td data-label="今日市值 (百萬)">${formatMillion(stock.amountToday)}</td>
@@ -362,7 +394,7 @@
             })
             .catch(err => {
                 console.error("讀取資料失敗:", err);
-                document.getElementById('body-all').innerHTML = '<tr><td colspan="5" style="text-align: center; color: red;">資料讀取失敗，請確認檔案路徑。</td></tr>';
+                document.getElementById('body-all').innerHTML = `<tr><td colspan="5" style="text-align: center; color: red;">資料讀取失敗！請確認 data/${currentETF}/daily_diff.json 是否存在。</td></tr>`;
             });
     </script>
 </body>

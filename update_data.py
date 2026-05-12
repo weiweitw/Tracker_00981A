@@ -14,7 +14,11 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
 if not os.path.exists(DATA_DIR):
     os.makedirs(DATA_DIR)
 
-TARGET_URL = 'https://www.ezmoney.com.tw/ETF/Fund/Info?fundCode=49YTW'
+# 追蹤ETF清單
+ETF_TARGETS = {
+    '00981A': 'https://www.ezmoney.com.tw/ETF/Fund/Info?fundCode=49YTW',
+    '00403A': 'https://www.ezmoney.com.tw/ETF/Fund/Info?fundCode=63YTW'
+}
 
 def fetch_with_retry(url, retries=3):
     # 完整的瀏覽器偽裝標頭
@@ -48,10 +52,15 @@ def fetch_with_retry(url, retries=3):
             print(f"等待 {wait_time} 秒後重新嘗試...")
             time.sleep(wait_time)
 
-def fetch_etf_data():
+def process_etf(etf_code, target_url):
     try:
-        print("開始執行 00981A 資料更新任務 (Python版)...")
-        html = fetch_with_retry(TARGET_URL)
+        print(f"\n================ 開始執行 {etf_code} 資料更新任務 ================")
+
+        # 建立該ETF專屬資料夾
+        ETF_DIR = os.path.join(DATA_DIR, etf_code)
+        os.makedirs(ETF_DIR, exist_ok=True)
+
+        html = fetch_with_retry(target_url)
         print("網頁抓取成功！開始解析資料...")
 
         # 解析 HTML
@@ -64,7 +73,7 @@ def fetch_etf_data():
         # 讀取隱藏的 JSON 資料
         raw_data = json.loads(data_asset['data-content'])
 
-        # --- 【安全讀取 EditDate】 ---
+        # 安全讀取 EditDate
         edit_date_raw = ""
         # 確保 raw_data 是個列表，且裡面有東西
         if isinstance(raw_data, list) and len(raw_data) > 0:
@@ -80,7 +89,10 @@ def fetch_etf_data():
         else:
             update_date = edit_date_raw.split('T')[0] if 'T' in edit_date_raw else edit_date_raw
 
-        diff_file = os.path.join(DATA_DIR, 'daily_diff.json')
+        # 該ETF專屬存檔路徑
+        diff_file = os.path.join(ETF_DIR, 'daily_diff.json')
+        yesterday_file = os.path.join(ETF_DIR, 'yesterday.json')
+        time_series_file = os.path.join(ETF_DIR, 'time_series.json')
 
         # 檢查是否需要更新
         if os.path.exists(diff_file):
@@ -96,7 +108,7 @@ def fetch_etf_data():
 
         print(f"發現新資料日期：{update_date}，準備進行更新...")
 
-        # --- 【安全尋找股票明細】 ---
+        # 安全尋找股票明細
         stock_details = []
         if isinstance(raw_data, list):
             for item in raw_data:
@@ -124,8 +136,6 @@ def fetch_etf_data():
                         }
 
         print(f"成功解析 {len(today_map)} 檔股票。")
-
-        yesterday_file = os.path.join(DATA_DIR, 'yesterday.json')
 
         # 讀取昨天的資料
         yesterday_map = {}
@@ -173,22 +183,21 @@ def fetch_etf_data():
         # 寫入差異結果檔案
         with open(diff_file, 'w', encoding='utf-8') as f:
             json.dump(final_output, f, ensure_ascii=False, indent=2)
-        print("差異計算完成，已儲存至 data/daily_diff.json")
+        print(f"差異計算完成，已儲存至 data/{etf_code}/daily_diff.json")
 
         # 儲存今天的完整歷史紀錄
         # 這裡改用 update_date 命名檔案，會比系統當下時間更準確
         history_date_str = update_date.replace('-', '') 
-        history_file = os.path.join(DATA_DIR, f'holdings_{history_date_str}.json')
+        history_file = os.path.join(ETF_DIR, f'holdings_{history_date_str}.json')
         with open(history_file, 'w', encoding='utf-8') as f:
             json.dump(today_map, f, ensure_ascii=False, indent=2)
 
         # 將今天的資料覆蓋為 yesterday.json，供明天使用
         with open(yesterday_file, 'w', encoding='utf-8') as f:
             json.dump(today_map, f, ensure_ascii=False, indent=2)
-        print("今日資料已同步更新至 data/yesterday.json")
+        print(f"今日資料已同步更新至 data/{etf_code}/yesterday.json")
 
         # 更新 time_series.json
-        time_series_file = os.path.join(DATA_DIR, 'time_series.json')
         time_series_data = {}
 
         if os.path.exists(time_series_file):
@@ -230,14 +239,12 @@ def fetch_etf_data():
         # 寫回 time_series.json
         with open(time_series_file, 'w', encoding='utf-8') as f:
             json.dump(time_series_data, f, ensure_ascii=False, indent=2)
-        print("時間序列已更新至 data/time_series.json")
-            
-
-        print("🎉 所有更新流程執行完畢！")
+        print(f"時間序列已更新至 data/{etf_code}/time_series.json")
 
     except Exception as e:
         print(f"❌ 執行發生錯誤: {e}")
         exit(1)
 
 if __name__ == '__main__':
-    fetch_etf_data()
+    for etf_code, url in ETF_TARGETS.items():
+        process_etf(etf_code, url)
