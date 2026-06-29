@@ -1,12 +1,12 @@
 {
-  "updateDate": "2026-06-26",
+  "updateDate": "2026-06-29",
   "holdings": [
     {
       "code": "2330",
       "name": "台積電",
       "sharesToday": 12900.0,
       "sharesDiff": 0.0,
-      "amountToday": 30186000000.0
+      "amountToday": 30573000000.0
     },
     {
       "code": "2303",
@@ -20,133 +20,133 @@
       "name": "國巨*",
       "sharesToday": 10050.0,
       "sharesDiff": 0.0,
-      "amountToday": 10200750000.0
+      "amountToday": 10452000000.0
     },
     {
       "code": "3037",
       "name": "欣興",
       "sharesToday": 8960.0,
       "sharesDiff": 0.0,
-      "amountToday": 8736000000.0
+      "amountToday": 8744960000.0
     },
     {
       "code": "2344",
       "name": "華邦電",
       "sharesToday": 38800.0,
       "sharesDiff": 0.0,
-      "amountToday": 8012200000.0
+      "amountToday": 7876400000.0
     },
     {
       "code": "3017",
       "name": "奇鋐",
       "sharesToday": 3250.0,
       "sharesDiff": 0.0,
-      "amountToday": 7328750000.0
+      "amountToday": 7475000000.0
     },
     {
       "code": "2383",
       "name": "台光電",
       "sharesToday": 1350.0,
       "sharesDiff": 0.0,
-      "amountToday": 7094250000.0
+      "amountToday": 7357500000.0
     },
     {
       "code": "6223",
       "name": "旺矽",
       "sharesToday": 940.0,
       "sharesDiff": 0.0,
-      "amountToday": 6110000000.0
+      "amountToday": 5696400000.0
     },
     {
       "code": "2454",
       "name": "聯發科",
       "sharesToday": 1435.0,
       "sharesDiff": 0.0,
-      "amountToday": 5567800000.0
+      "amountToday": 5610850000.0
     },
     {
       "code": "2345",
       "name": "智邦",
       "sharesToday": 2100.0,
       "sharesDiff": 0.0,
-      "amountToday": 4998000000.0
-    },
-    {
-      "code": "2368",
-      "name": "金像電",
-      "sharesToday": 3700.0,
-      "sharesDiff": 0.0,
-      "amountToday": 4403000000.0
+      "amountToday": 4914000000.0
     },
     {
       "code": "2308",
       "name": "台達電",
       "sharesToday": 2430.0,
       "sharesDiff": 0.0,
-      "amountToday": 4398300000.0
+      "amountToday": 4629150000.0
     },
     {
       "code": "4958",
       "name": "臻鼎-KY",
       "sharesToday": 6440.0,
       "sharesDiff": 0.0,
-      "amountToday": 3735200000.0
+      "amountToday": 3690120000.0
     },
     {
       "code": "6669",
       "name": "緯穎",
       "sharesToday": 790.0,
       "sharesDiff": 0.0,
-      "amountToday": 3381200000.0
+      "amountToday": 3618200000.0
+    },
+    {
+      "code": "2368",
+      "name": "金像電",
+      "sharesToday": 2900.0,
+      "sharesDiff": -800.0,
+      "amountToday": 3349500000.0
     },
     {
       "code": "3711",
       "name": "日月光投控",
       "sharesToday": 4500.0,
       "sharesDiff": 0.0,
-      "amountToday": 2844000000.0
+      "amountToday": 2821500000.0
     },
     {
       "code": "3653",
       "name": "健策",
       "sharesToday": 830.0,
       "sharesDiff": 0.0,
-      "amountToday": 2826150000.0
-    },
-    {
-      "code": "6274",
-      "name": "台燿",
-      "sharesToday": 1700.0,
-      "sharesDiff": 0.0,
-      "amountToday": 2686000000.0
+      "amountToday": 2755600000.0
     },
     {
       "code": "3533",
       "name": "嘉澤",
       "sharesToday": 1240.0,
       "sharesDiff": 0.0,
-      "amountToday": 2610200000.0
+      "amountToday": 2647400000.0
+    },
+    {
+      "code": "6274",
+      "name": "台燿",
+      "sharesToday": 1700.0,
+      "sharesDiff": 0.0,
+      "amountToday": 2643500000.0
     },
     {
       "code": "3189",
       "name": "景碩",
-      "sharesToday": 2940.0,
-      "sharesDiff": 972.0,
-      "amountToday": 2343180000.0
+      "sharesToday": 3200.0,
+      "sharesDiff": 260.0,
+      "amountToday": 2592000000.0
     },
     {
       "code": "8996",
       "name": "高力",
       "sharesToday": 1560.0,
       "sharesDiff": 0.0,
-      "amountToday": 2137200000.0
+      "amountToday": 2301000000.0
     },
     {
       "code": "5347",
       "name": "世界",
       "sharesToday": 9911.0,
       "sharesDiff": 0.0,
-      "amountToday": 2002022000.0
+      "amountToday": 2066443500.0
     },
     {
       "code": "3443",
@@ -160,182 +160,182 @@
       "name": "環球晶",
       "sharesToday": 2000.0,
       "sharesDiff": 0.0,
-      "amountToday": 1872000000.0
+      "amountToday": 1830000000.0
     },
     {
       "code": "7769",
       "name": "鴻勁",
       "sharesToday": 279.0,
       "sharesDiff": 0.0,
-      "amountToday": 1813500000.0
+      "amountToday": 1784205000.0
     },
     {
       "code": "6515",
       "name": "穎崴",
       "sharesToday": 200.0,
       "sharesDiff": 0.0,
-      "amountToday": 1638000000.0
+      "amountToday": 1603000000.0
     },
     {
       "code": "2337",
       "name": "旺宏",
       "sharesToday": 10000.0,
-      "sharesDiff": -3850.0,
-      "amountToday": 1625000000.0
+      "sharesDiff": 0.0,
+      "amountToday": 1585000000.0
     },
     {
       "code": "6147",
       "name": "頎邦",
       "sharesToday": 6000.0,
       "sharesDiff": 0.0,
-      "amountToday": 1299000000.0
-    },
-    {
-      "code": "3529",
-      "name": "力旺",
-      "sharesToday": 390.0,
-      "sharesDiff": 0.0,
-      "amountToday": 1140750000.0
-    },
-    {
-      "code": "8358",
-      "name": "金居",
-      "sharesToday": 1950.0,
-      "sharesDiff": 0.0,
-      "amountToday": 1111500000.0
+      "amountToday": 1266000000.0
     },
     {
       "code": "1303",
       "name": "南亞",
       "sharesToday": 7550.0,
       "sharesDiff": 0.0,
-      "amountToday": 1117400000.0
+      "amountToday": 1143825000.0
+    },
+    {
+      "code": "3529",
+      "name": "力旺",
+      "sharesToday": 390.0,
+      "sharesDiff": 0.0,
+      "amountToday": 1131000000.0
+    },
+    {
+      "code": "8358",
+      "name": "金居",
+      "sharesToday": 1950.0,
+      "sharesDiff": 0.0,
+      "amountToday": 1064700000.0
     },
     {
       "code": "6805",
       "name": "富世達",
       "sharesToday": 570.0,
       "sharesDiff": 0.0,
-      "amountToday": 934800000.0
+      "amountToday": 926250000.0
     },
     {
       "code": "2360",
       "name": "致茂",
       "sharesToday": 450.0,
       "sharesDiff": 0.0,
-      "amountToday": 915750000.0
+      "amountToday": 936000000.0
     },
     {
       "code": "8046",
       "name": "南電",
       "sharesToday": 795.0,
       "sharesDiff": 0.0,
-      "amountToday": 894375000.0
+      "amountToday": 858600000.0
     },
     {
       "code": "2317",
       "name": "鴻海",
       "sharesToday": 3200.0,
       "sharesDiff": 0.0,
-      "amountToday": 795200000.0
+      "amountToday": 788800000.0
     },
     {
       "code": "3583",
       "name": "辛耘",
       "sharesToday": 900.0,
       "sharesDiff": 0.0,
-      "amountToday": 730800000.0
+      "amountToday": 774900000.0
     },
     {
       "code": "5274",
       "name": "信驊",
       "sharesToday": 45.0,
       "sharesDiff": 0.0,
-      "amountToday": 702675000.0
+      "amountToday": 684450000.0
+    },
+    {
+      "code": "1560",
+      "name": "中砂",
+      "sharesToday": 900.0,
+      "sharesDiff": 100.0,
+      "amountToday": 664200000.0
     },
     {
       "code": "3211",
       "name": "順達",
       "sharesToday": 1560.0,
       "sharesDiff": 0.0,
-      "amountToday": 608400000.0
-    },
-    {
-      "code": "1560",
-      "name": "中砂",
-      "sharesToday": 800.0,
-      "sharesDiff": 0.0,
-      "amountToday": 562400000.0
-    },
-    {
-      "code": "6442",
-      "name": "光聖",
-      "sharesToday": 322.0,
-      "sharesDiff": -248.0,
-      "amountToday": 540960000.0
+      "amountToday": 612300000.0
     },
     {
       "code": "4966",
       "name": "譜瑞-KY",
       "sharesToday": 900.0,
       "sharesDiff": 0.0,
-      "amountToday": 547200000.0
+      "amountToday": 567900000.0
     },
     {
       "code": "6196",
       "name": "帆宣",
       "sharesToday": 1000.0,
       "sharesDiff": 0.0,
-      "amountToday": 531000000.0
+      "amountToday": 532000000.0
     },
     {
       "code": "6415",
       "name": "矽力*-KY",
       "sharesToday": 900.0,
       "sharesDiff": 0.0,
-      "amountToday": 514800000.0
+      "amountToday": 538200000.0
+    },
+    {
+      "code": "6442",
+      "name": "光聖",
+      "sharesToday": 300.0,
+      "sharesDiff": -22.0,
+      "amountToday": 480000000.0
     },
     {
       "code": "3665",
       "name": "貿聯-KY",
-      "sharesToday": 250.0,
-      "sharesDiff": -150.0,
-      "amountToday": 463750000.0
+      "sharesToday": 166.0,
+      "sharesDiff": -84.0,
+      "amountToday": 312080000.0
     },
     {
       "code": "2049",
       "name": "上銀",
       "sharesToday": 1010.0,
       "sharesDiff": 0.0,
-      "amountToday": 310070000.0
+      "amountToday": 321685000.0
     },
     {
       "code": "2455",
       "name": "全新",
       "sharesToday": 450.0,
       "sharesDiff": 0.0,
-      "amountToday": 156600000.0
+      "amountToday": 151200000.0
     },
     {
       "code": "4979",
       "name": "華星光",
       "sharesToday": 300.0,
-      "sharesDiff": -200.0,
-      "amountToday": 137700000.0
+      "sharesDiff": 0.0,
+      "amountToday": 136950000.0
     },
     {
       "code": "8299",
       "name": "群聯",
       "sharesToday": 1.0,
       "sharesDiff": 0.0,
-      "amountToday": 2310000.0
+      "amountToday": 2340000.0
     },
     {
       "code": "8210",
       "name": "勤誠",
       "sharesToday": 1.0,
       "sharesDiff": 0.0,
-      "amountToday": 1230000.0
+      "amountToday": 1215000.0
     },
     {
       "code": "3081",
@@ -349,7 +349,7 @@
       "name": "穩懋",
       "sharesToday": 1.0,
       "sharesDiff": 0.0,
-      "amountToday": 424000.0
+      "amountToday": 412000.0
     }
   ]
 }
